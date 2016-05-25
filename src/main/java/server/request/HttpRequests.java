@@ -1,31 +1,32 @@
 package server.request;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import server.common.HttpMethod;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
 public class HttpRequests {
 
-
-    public static HttpRequest parse(InputStream requestStream) {
+    public static HttpRequest parse(InputStream requestStream, Path filesDirectory) {
         try {
             BufferedReader requestReader = new BufferedReader(new InputStreamReader(requestStream));
             HttpRequest httpRequest;
             String line;
             List<String> requestHead;
-            StringBuilder bodyBuilder = new StringBuilder();
             line = requestReader.readLine();
             requestHead = parseRequestHead(line);
 
+            HttpMethod method = HttpMethod.valueOf(requestHead.get(0));
+
             httpRequest = new HttpRequest();
-            httpRequest.setMethod(HttpMethod.valueOf(requestHead.get(0)));
+            httpRequest.setMethod(method);
             httpRequest.setUrl(requestHead.get(1));
             httpRequest.setProtocol(requestHead.get(2));
 
@@ -36,14 +37,28 @@ public class HttpRequests {
                 httpRequest.addHeader(header.get(0), header.get(1));
                 line = requestReader.readLine();
             }
-            while (requestReader.ready()) {
-                line = requestReader.readLine();
-                bodyBuilder.append(line);
-            }
 
-            httpRequest.setBody(bodyBuilder.toString());
+            if (method == HttpMethod.POST && httpRequest.getUrl().equals("/upload")) {
+                line = requestReader.readLine();
+                if (line.contains("------")) {
+                    line = requestReader.readLine();
+                    String metadata = Splitter.on(";").omitEmptyStrings().splitToList(line).get(2);
+                    String fileName = Splitter.on("=").splitToList(metadata).get(1).replaceAll("\"", "");
+                    requestReader.readLine();
+                    requestReader.readLine();
+
+                    List<String> requestChars = Lists.newArrayList();
+                    while (requestReader.ready()) {
+                        requestChars.add(requestReader.readLine());
+                    }
+                    requestChars.remove(requestChars.size() - 1);
+                    String fileLine = Joiner.on("\n").join(requestChars);
+                    Path newFile = filesDirectory.resolve(fileName);
+                    saveNewFile(fileLine.getBytes(), newFile);
+                }
+            }
             return httpRequest;
-        } catch (IOException | ArrayIndexOutOfBoundsException e) {
+        } catch (IOException | IndexOutOfBoundsException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
@@ -72,5 +87,16 @@ public class HttpRequests {
         }
 
         return requestHead;
+    }
+
+    private static boolean saveNewFile(byte[] body, Path fileName) {
+        try {
+            File file = fileName.toFile();
+            file.createNewFile();
+            FileUtils.writeByteArrayToFile(file, body);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

@@ -1,18 +1,23 @@
 package server.request;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.fileupload.RequestContext;
 import server.common.ContentType;
 import server.common.HttpMethod;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
-public class HttpRequest {
+public class HttpRequest implements RequestContext {
     private HttpMethod method;
+    private InputStream inputStream;
     private String url;
     private ContentType contentType;
+    private int contentLength;
     private String protocol;
     private Map<String, String> header = Maps.newTreeMap();
-    private String body;
+    private byte[] body;
 
     protected HttpRequest() {
     }
@@ -33,12 +38,36 @@ public class HttpRequest {
         this.url = url;
     }
 
-    public ContentType getContentType() {
-        return contentType;
+    @Override
+    public String getCharacterEncoding() {
+        return "UTF-8";
+    }
+
+    @Override
+    public String getContentType() {
+        return contentType.getEncoding();
     }
 
     protected void setContentType(ContentType contentType) {
         this.contentType = contentType;
+    }
+
+    @Override
+    public int getContentLength() {
+        return contentLength;
+    }
+
+    public void setContentLength(int contentLength) {
+        this.contentLength = contentLength;
+    }
+
+    @Override
+    public InputStream getInputStream() throws IOException {
+        return inputStream;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 
     public String getProtocol() {
@@ -57,11 +86,11 @@ public class HttpRequest {
         this.header = header;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 
-    protected void setBody(String body) {
+    protected void setBody(byte[] body) {
         this.body = body;
     }
 

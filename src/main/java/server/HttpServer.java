@@ -28,7 +28,7 @@ public class HttpServer {
         try {
             socket = new ServerSocket(port);
             executorService = Executors.newFixedThreadPool(idealNumberOfThreads());
-            LOGGER.info(String.format("Server started and available at %s:%s", System.getenv("HOSTNAME"), port));
+            LOGGER.info(String.format("Server started and available at %s:%s", System.getenv("HOSTNAME"), socket.getLocalPort()));
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
         }
@@ -68,14 +68,19 @@ public class HttpServer {
      */
     private Path getFileDirectoryFrom(String fileDirectory) throws IOException {
         Path homeDirectory;
+        String dirMessage;
         if (fileDirectory == null) {
-            homeDirectory = Paths.get(System.getProperty("user.home"), "serverFiles");
+            homeDirectory = Paths.get(System.getProperty("user.home"), "httpServerFiles");
+            dirMessage = "File location defaulted to %s";
         } else {
             homeDirectory = Paths.get(fileDirectory);
+            dirMessage = "File location is %s";
         }
         if (!Files.exists(homeDirectory)) {
             Files.createDirectory(homeDirectory);
         }
+
+        LOGGER.info(String.format(dirMessage, homeDirectory.toAbsolutePath()));
         return homeDirectory;
     }
 

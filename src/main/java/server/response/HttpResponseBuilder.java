@@ -81,6 +81,12 @@ public class HttpResponseBuilder {
                 } else {
                     withContentType(ContentType.TEXT);
                 }
+                if (filename.startsWith("tempIndex")) {
+                    boolean deletedTempIndexFile = file.delete();
+                    if (!deletedTempIndexFile) {
+                        file.deleteOnExit();
+                    }
+                }
             } catch (IOException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }

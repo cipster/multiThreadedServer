@@ -3,11 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Welcome to your favorite File server</title>
+
+    <!-- Latest compiled and minified Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          crossorigin="anonymous">
 </head>
 <body>
 <!--[if IE]>
-<p style="text-align: center">Hi, I can see you are using Internet Explorer and just wanted to inform you that <b>this</b> works better in a browser</p>
+<h2 style="text-align: center">Hi, I can see you are using Internet Explorer and just wanted to inform you that <b>this</b> works better in a browser</h2>
 <![endif]-->
-<h4>Files, get your files here</h4>
+<div class="container">
+    <h2>Files, get your files here</h2>
+    <hr class="separator">
+    <div class="well">
+        <ul class="list-group">
+            {{replaceable}}
+        </ul>
+    </div>
+    <a class="btn btn-primary" href="/file-upload.html">Upload more files</a>
+</div>
+
+<!-- Latest compiled and minified Bootstrap JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 </body>
 </html>
