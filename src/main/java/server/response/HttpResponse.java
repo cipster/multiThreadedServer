@@ -55,7 +55,6 @@ public class HttpResponse {
     public static class StatusCode {
         public static final String OK = "200 OK";
         public static final String NOT_FOUND = "404 Not Found";
-        public static final String NOT_IMPLEMENTED = "501 Not Implemented";
     }
 
     public static class Headers {
@@ -67,6 +66,5 @@ public class HttpResponse {
         public static final String SERVER = "Server";
         public static final String HOST = "Host";
         public static final String COOKIE = "Cookie";
-        public static final String ACCEPT = "Accept";
     }
 }

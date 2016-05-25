@@ -98,12 +98,6 @@ public class HttpResponseBuilder {
         return this;
     }
 
-    private HttpResponseBuilder withBody(String htmlBody) {
-        this.body = htmlBody.getBytes();
-
-        return this;
-    }
-
     public HttpResponseBuilder withRequestHeaders(Map<String, String> headers) {
         List<String> headersToPassOn = Lists.newArrayList(HttpResponse.Headers.HOST, HttpResponse.Headers.COOKIE);
         headers.entrySet()

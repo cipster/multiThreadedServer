@@ -76,7 +76,11 @@ public class ResponseDispatcherImpl implements ResponseDispatcher {
                 break;
             default:
                 pageFile = httpServer.getFileDirectory().resolve(requestedPath).toFile();
-                responseBuilder.withAttachmentContentDisposition(pageFile.getName());
+                if (pageFile.exists()) {
+                    responseBuilder.withAttachmentContentDisposition(pageFile.getName());
+                } else {
+                    pageFile = new File(PageUtils.notFoundPage());
+                }
         }
         responseBuilder.withBody(pageFile);
         return responseBuilder.build();
@@ -93,9 +97,9 @@ public class ResponseDispatcherImpl implements ResponseDispatcher {
                 .stream()
                 .map(File::getName)
                 .forEach(filename -> stringBuilder
-                        .append("<li class='list-group-item'><a target='_blank' href='/").append(filename).append("'>")
+                        .append("<a class='list-group-item' target='_blank' href='/").append(filename).append("'>")
                         .append(filename)
-                        .append("</a></li>"));
+                        .append("</a>"));
 
         String replacedIndexPage = FileUtils.readFileToString(pageFile).replace("{{replaceable}}", stringBuilder.toString());
         pageFile = File.createTempFile(TEMP_INDEX_NAME, ".html");
