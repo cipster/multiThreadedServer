@@ -86,6 +86,9 @@ public class ResponseDispatcherImpl implements ResponseDispatcher {
         File pageFile = new File(PageUtils.indexPage());
         List<File> uploadedFiles = PageUtils.getUploadedFiles(httpServer.getFileDirectory());
         StringBuilder stringBuilder = new StringBuilder();
+        if (uploadedFiles.isEmpty()) {
+            stringBuilder.append("<h3 class='text-warning'>No files here. Upload some by pressing the button below</h3>");
+        }
         uploadedFiles
                 .stream()
                 .map(File::getName)

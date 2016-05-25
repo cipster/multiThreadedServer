@@ -43,7 +43,7 @@ public class HttpRequests {
                 if (line.contains("------")) {
                     line = requestReader.readLine();
                     String metadata = Splitter.on(";").omitEmptyStrings().splitToList(line).get(2);
-                    String fileName = Splitter.on("=").splitToList(metadata).get(1).replaceAll("\"", "");
+                    String fileName = Splitter.on("=").splitToList(metadata).get(1).replaceAll("\"", "").replaceAll(" ", "_");
                     requestReader.readLine();
                     requestReader.readLine();
 
