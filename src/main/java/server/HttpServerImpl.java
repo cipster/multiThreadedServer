@@ -30,7 +30,14 @@ public class HttpServerImpl implements HttpServer {
     public void start() {
         serverRunning = true;
         executorService = Executors.newFixedThreadPool(idealNumberOfThreads());
-        LOGGER.info(String.format("Server started and available at %s:%s", System.getenv("HOSTNAME"), socket.getLocalPort()));
+        String hostname;
+
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            hostname = "0.0.0.0";
+        } else {
+            hostname = System.getenv("HOSTNAME");
+        }
+        LOGGER.info(String.format("Server started and available at %s:%s", hostname, socket.getLocalPort()));
 
         while (isServerRunning()) {
             try {

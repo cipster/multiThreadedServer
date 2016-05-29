@@ -14,10 +14,10 @@ import server.common.HttpMethod;
 import server.request.HttpRequest;
 import server.request.HttpRequests;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -40,7 +40,7 @@ public class SocketConnectionTest {
 
     @Before
     public void setUp() throws Exception {
-        requestString = FileUtils.readFileToString(new File("."));
+        requestString = FileUtils.readFileToString(Paths.get("./src/test/resources/getRequest.txt").toFile());
         mockStatic(HttpRequests.class);
         when(HttpRequests.parse(any(InputStream.class), any(Path.class))).thenReturn(httpRequest);
         when(httpRequest.getUrl()).thenReturn("/index.html");
