@@ -56,15 +56,4 @@ public class HttpResponse {
         public static final String OK = "200 OK";
         public static final String NOT_FOUND = "404 Not Found";
     }
-
-    public static class Headers {
-        public static final String DATE = "Date";
-        public static final String CONTENT_TYPE = "Content-Type";
-        public static final String CONTENT_DISPOSITION = "Content-Disposition";
-        public static final String CONTENT_LENGTH = "Content-Length";
-        public static final String CONNECTION = "Keep-Alive";
-        public static final String SERVER = "Server";
-        public static final String HOST = "Host";
-        public static final String COOKIE = "Cookie";
-    }
 }

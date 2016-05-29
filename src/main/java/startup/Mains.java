@@ -1,6 +1,7 @@
 package startup;
 
 import server.HttpServer;
+import server.HttpServerImpl;
 
 import java.util.logging.Logger;
 
@@ -8,6 +9,7 @@ public class Mains {
     private static final Logger LOGGER = Logger.getLogger(Mains.class.getName());
 
     public static void main(String[] args) {
+        HttpServer httpServer;
         String webRoot = null;
         int port = 0;
         if (args.length == 0 || args[0].equals("-h") || args[0].equals("-help")) {
@@ -20,7 +22,9 @@ public class Mains {
         }
 
         try {
-            new HttpServer(port, webRoot).start();
+            httpServer = new HttpServerImpl(port, webRoot);
+
+            httpServer.start();
         } catch (Exception e) {
             LOGGER.info(e.getMessage());
         }

@@ -1,8 +1,8 @@
 package server.response;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import server.common.ContentType;
+import server.common.Header;
 import server.common.PageUtils;
 
 import java.io.File;
@@ -10,7 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.EnumSet;
 import java.util.Map;
 
 public class HttpResponseBuilder {
@@ -29,21 +29,27 @@ public class HttpResponseBuilder {
         return this;
     }
 
+    public HttpResponseBuilder withStatus(String status) {
+        this.status = status;
+
+        return this;
+    }
+
     public HttpResponseBuilder withDate() {
         String formattedDateTime = ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        withHeader(HttpResponse.Headers.DATE, formattedDateTime);
+        withHeader(Header.DATE.toString(), formattedDateTime);
 
         return this;
     }
 
     public HttpResponseBuilder withContentType(ContentType contentType) {
-        withHeader(HttpResponse.Headers.CONTENT_TYPE, contentType.getEncoding());
+        withHeader(Header.CONTENT_TYPE.toString(), contentType.getEncoding());
 
         return this;
     }
 
     public HttpResponseBuilder withAttachmentContentDisposition(String filename) {
-        withHeader(HttpResponse.Headers.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", filename));
+        withHeader(Header.CONTENT_DISPOSITION.toString(), String.format("attachment; filename=\"%s\"", filename));
 
         return this;
     }
@@ -55,13 +61,13 @@ public class HttpResponseBuilder {
         } else {
             keepAliveValue = "Close";
         }
-        withHeader(HttpResponse.Headers.CONNECTION, keepAliveValue);
+        withHeader(Header.CONNECTION.toString(), keepAliveValue);
 
         return this;
     }
 
     public HttpResponseBuilder withContentLength(int length) {
-        withHeader(HttpResponse.Headers.CONTENT_LENGTH, String.valueOf(length));
+        withHeader(Header.CONTENT_LENGTH.toString(), String.valueOf(length));
 
         return this;
     }
@@ -99,16 +105,19 @@ public class HttpResponseBuilder {
     }
 
     public HttpResponseBuilder withRequestHeaders(Map<String, String> headers) {
-        List<String> headersToPassOn = Lists.newArrayList(HttpResponse.Headers.HOST, HttpResponse.Headers.COOKIE);
+        if (headers == null) {
+            throw new IllegalArgumentException("HTTP Request headers must not be null");
+        }
+        EnumSet<Header> headersToPassOn = EnumSet.of(Header.HOST, Header.COOKIE);
         headers.entrySet()
                 .stream()
-                .filter(entry -> headersToPassOn.contains(entry.getKey()))
+                .filter(entry -> headersToPassOn.contains(Header.parseFrom(entry.getKey())))
                 .forEach(entry -> {
                     String key = entry.getKey();
                     String value = entry.getValue();
 
-                    if (key.equals(HttpResponse.Headers.HOST)) {
-                        key = HttpResponse.Headers.SERVER;
+                    if (key.equals(Header.HOST.toString())) {
+                        key = Header.SERVER.toString();
                     }
 
                     withHeader(key, value);

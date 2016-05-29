@@ -15,10 +15,12 @@ public class SocketConnection implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(SocketConnection.class.getName());
     private Socket socket;
     private HttpServer httpServer;
+    private ResponseDispatcher dispatcher;
 
     public SocketConnection(Socket socket, HttpServer httpServer) {
         this.socket = socket;
         this.httpServer = httpServer;
+        this.dispatcher = this.httpServer.getDispatcher();
     }
 
     @Override
@@ -26,7 +28,6 @@ public class SocketConnection implements Runnable {
         try (InputStream socketInputStream = socket.getInputStream();
              OutputStream socketOutputStream = socket.getOutputStream()) {
 
-            ResponseDispatcher dispatcher = new ResponseDispatcherImpl(httpServer);
             HttpRequest httpRequest = HttpRequests.parse(socketInputStream, httpServer.getFileDirectory());
 
             HttpResponse response = dispatcher.dispatch(httpRequest);

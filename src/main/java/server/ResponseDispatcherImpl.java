@@ -23,36 +23,52 @@ public class ResponseDispatcherImpl implements ResponseDispatcher {
     @Override
     public HttpResponse dispatch(HttpRequest httpRequest) throws IOException {
         HttpResponse response;
-        HttpMethod method = httpRequest.getMethod();
-        switch (method) {
-            case HEAD:
-            case GET:
-                response = buildGetResponse(httpRequest);
-                break;
-            case POST:
-                response = buildPostResponse(httpRequest);
-                break;
-            default:
-                response = new HttpResponseBuilder(HttpResponse.StatusCode.NOT_FOUND)
-                        .withBody(new File(PageUtils.notFoundPage()))
-                        .build();
+        if (httpRequest == null) {
+            response = new HttpResponseBuilder(HttpResponse.StatusCode.NOT_FOUND)
+                    .withBody(new File(PageUtils.notFoundPage()))
+                    .build();
+        } else {
+            HttpMethod method = getHttpMethod(httpRequest);
 
+            switch (method) {
+                case HEAD:
+                case GET:
+                    response = buildGetResponse(httpRequest);
+                    break;
+                case POST:
+                    response = buildPostResponse(httpRequest);
+                    break;
+                default:
+                    response = new HttpResponseBuilder(HttpResponse.StatusCode.NOT_FOUND)
+                            .withBody(new File(PageUtils.notFoundPage()))
+                            .build();
+
+            }
         }
-
         return response;
+    }
+
+    private HttpMethod getHttpMethod(HttpRequest httpRequest) {
+        HttpMethod method = httpRequest.getMethod();
+        if (method == null) {
+            throw new IllegalArgumentException("HTTP Request Method should not be null");
+        }
+        return method;
     }
 
     private HttpResponse buildPostResponse(HttpRequest httpRequest) {
         HttpResponseBuilder responseBuilder = new HttpResponseBuilder(HttpResponse.StatusCode.OK)
+                .withKeepAlive(false)
                 .withRequestHeaders(httpRequest.getHeader());
         File pageFile;
-        String requestedPath = httpRequest.getUrl().replaceAll(STARTING_WITH_FORWARD_SLASH, "");
+        String requestedPath = getRequestedPath(httpRequest);
         switch (requestedPath) {
             case "upload":
                 pageFile = new File(PageUtils.fileUploadSuccessPage());
                 break;
             default:
                 pageFile = new File(PageUtils.notFoundPage());
+                responseBuilder.withStatus(HttpResponse.StatusCode.NOT_FOUND);
         }
         responseBuilder.withBody(pageFile);
         return responseBuilder.build();
@@ -62,7 +78,7 @@ public class ResponseDispatcherImpl implements ResponseDispatcher {
         HttpResponseBuilder responseBuilder = new HttpResponseBuilder(HttpResponse.StatusCode.OK)
                 .withRequestHeaders(httpRequest.getHeader());
         File pageFile;
-        String requestedPath = httpRequest.getUrl().replaceAll(STARTING_WITH_FORWARD_SLASH, "");
+        String requestedPath = getRequestedPath(httpRequest);
         switch (requestedPath) {
             case "":
             case "index.html":
@@ -71,19 +87,25 @@ public class ResponseDispatcherImpl implements ResponseDispatcher {
             case "file-upload.html":
                 pageFile = new File(PageUtils.fileUploadPage());
                 break;
-            case "upload":
-                pageFile = new File(PageUtils.fileUploadSuccessPage());
-                break;
             default:
                 pageFile = httpServer.getFileDirectory().resolve(requestedPath).toFile();
                 if (pageFile.exists()) {
                     responseBuilder.withAttachmentContentDisposition(pageFile.getName());
                 } else {
                     pageFile = new File(PageUtils.notFoundPage());
+                    responseBuilder.withStatus(HttpResponse.StatusCode.NOT_FOUND);
                 }
         }
         responseBuilder.withBody(pageFile);
         return responseBuilder.build();
+    }
+
+    private String getRequestedPath(HttpRequest httpRequest) {
+        String httpRequestUrl = httpRequest.getUrl();
+        if (httpRequestUrl == null) {
+            throw new IllegalArgumentException("HTTP Request URL must not be null");
+        }
+        return httpRequestUrl.replaceAll(STARTING_WITH_FORWARD_SLASH, "");
     }
 
     private File buildIndexPage() throws IOException {

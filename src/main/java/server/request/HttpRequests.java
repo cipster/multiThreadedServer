@@ -90,13 +90,15 @@ public class HttpRequests {
     }
 
     private static boolean saveNewFile(byte[] body, Path fileName) {
+        boolean fileWasCreated;
         try {
             File file = fileName.toFile();
-            file.createNewFile();
+            fileWasCreated = file.createNewFile();
             FileUtils.writeByteArrayToFile(file, body);
-            return true;
         } catch (IOException e) {
-            return false;
+            fileWasCreated = false;
         }
+
+        return fileWasCreated;
     }
 }
