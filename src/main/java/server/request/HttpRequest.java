@@ -1,25 +1,22 @@
 package server.request;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.fileupload.RequestContext;
 import server.common.ContentType;
 import server.common.HttpMethod;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
-public class HttpRequest implements RequestContext {
+public class HttpRequest {
     private HttpMethod method;
-    private InputStream inputStream;
     private String url;
     private ContentType contentType;
-    private int contentLength;
     private String protocol;
-    private Map<String, String> header = Maps.newTreeMap();
-    private byte[] body;
+    private Map<String, String> header = Maps.newLinkedHashMap();
 
-    protected HttpRequest() {
+    public HttpRequest(HttpMethod method, String url, String protocol) {
+        this.method = method;
+        this.url = url;
+        this.protocol = protocol;
     }
 
     public HttpMethod getMethod() {
@@ -38,36 +35,12 @@ public class HttpRequest implements RequestContext {
         this.url = url;
     }
 
-    @Override
-    public String getCharacterEncoding() {
-        return "UTF-8";
-    }
-
-    @Override
     public String getContentType() {
         return contentType.getEncoding();
     }
 
     protected void setContentType(ContentType contentType) {
         this.contentType = contentType;
-    }
-
-    @Override
-    public int getContentLength() {
-        return contentLength;
-    }
-
-    public void setContentLength(int contentLength) {
-        this.contentLength = contentLength;
-    }
-
-    @Override
-    public InputStream getInputStream() throws IOException {
-        return inputStream;
-    }
-
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
     }
 
     public String getProtocol() {
@@ -86,15 +59,7 @@ public class HttpRequest implements RequestContext {
         this.header = header;
     }
 
-    public byte[] getBody() {
-        return body;
-    }
-
-    protected void setBody(byte[] body) {
-        this.body = body;
-    }
-
-    public void addHeader(String key, String value) {
-        this.header.put(key, value);
+    public void addHeader(Map<String, String> header) {
+        this.header.putAll(header);
     }
 }

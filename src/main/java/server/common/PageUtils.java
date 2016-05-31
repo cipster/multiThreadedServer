@@ -29,10 +29,6 @@ public class PageUtils {
         return getPage("file-upload-success.html");
     }
 
-    public static String fileUploadErrorPage() {
-        return getPage("file-upload-failure.html");
-    }
-
     private static String getPage(String pageName) {
         String page = "";
         URL pageLocation = PageUtils.class.getClassLoader().getResource(pageName);

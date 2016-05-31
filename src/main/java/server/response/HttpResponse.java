@@ -7,7 +7,7 @@ import java.util.Map;
 public class HttpResponse {
     private static final String protocol = "HTTP/1.1";
     private String status;
-    private Map<String, String> headers = Maps.newTreeMap();
+    private Map<String, String> headers = Maps.newLinkedHashMap();
     private byte[] body = null;
 
     public static String getProtocol() {

@@ -1,5 +1,8 @@
 package server;
 
+import server.request.HttpRequestParser;
+import server.request.HttpRequestParserImpl;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Files;
@@ -30,6 +33,7 @@ public class HttpServerImpl implements HttpServer {
     public void start() {
         serverRunning = true;
         executorService = Executors.newFixedThreadPool(idealNumberOfThreads());
+        HttpRequestParser httpRequestParser = new HttpRequestParserImpl();
         String hostname;
 
         if (System.getProperty("os.name").startsWith("Windows")) {
@@ -41,7 +45,7 @@ public class HttpServerImpl implements HttpServer {
 
         while (isServerRunning()) {
             try {
-                executorService.execute(new Thread(new SocketConnection(socket.accept(), this)));
+                executorService.execute(new Thread(new SocketConnection(socket.accept(), this, httpRequestParser)));
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
             }

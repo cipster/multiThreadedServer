@@ -16,7 +16,7 @@ import java.util.Map;
 public class HttpResponseBuilder {
     public static final String FOUR_OH_FOUR = PageUtils.notFoundPage();
     private String status;
-    private Map<String, String> headers = Maps.newTreeMap();
+    private Map<String, String> headers = Maps.newLinkedHashMap();
     private byte[] body = null;
 
     public HttpResponseBuilder(String status) {

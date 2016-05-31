@@ -1,58 +1,56 @@
 package server;
 
-import com.google.common.collect.Maps;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 import server.common.HttpMethod;
 import server.request.HttpRequest;
 import server.request.HttpRequestParser;
 
-import java.io.InputStream;
 import java.net.Socket;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({HttpRequestParser.class})
+@RunWith(MockitoJUnitRunner.class)
 public class SocketConnectionTest {
-
     @Mock
     private Socket socket;
     @Mock
     private HttpServer httpServer;
     @Mock
-    private HttpRequest httpRequest;
+    private ResponseDispatcher dispatcher;
+    @Mock
+    private HttpRequestParser httpRequestParser;
 
     @InjectMocks
     private SocketConnection classUnderTest;
-    private String requestString;
+
+    private HttpRequest httpRequestStub;
+    private Path pathStub;
 
     @Before
     public void setUp() throws Exception {
-        requestString = FileUtils.readFileToString(Paths.get("./src/test/resources/getRequest.txt").toFile());
-        mockStatic(HttpRequestParser.class);
-        when(HttpRequestParser.parse(any(InputStream.class), any(Path.class))).thenReturn(httpRequest);
-        when(httpRequest.getUrl()).thenReturn("/index.html");
-        when(httpRequest.getMethod()).thenReturn(HttpMethod.GET);
-        when(httpRequest.getHeader()).thenReturn(Maps.newHashMap());
-        when(httpRequest.getInputStream()).thenReturn(IOUtils.toInputStream(requestString));
-        when(httpServer.getDispatcher()).thenReturn(new ResponseDispatcherImpl(httpServer));
+        httpRequestStub = new HttpRequest(HttpMethod.GET, "", "HTTP/1.1");
 
     }
 
     @Test
-    public void testRunWithIOException() throws Exception {
+    public void testRunOk() throws Exception {
+//        String tempDir = System.getProperty("java.io.tmpdir");
+//        pathStub = Paths.get(tempDir);
+//        when(socket.getInputStream()).thenReturn(IOUtils.toInputStream("input"));
+//        when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+//        when(httpServer.getFileDirectory()).thenReturn(pathStub);
+        dispatcher = new ResponseDispatcherImpl(httpServer);
+
+        when(httpServer.getDispatcher()).thenReturn(dispatcher);
+        when(httpRequestParser.parse(any(), any())).thenReturn(httpRequestStub);
         classUnderTest.run();
+
     }
 }

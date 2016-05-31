@@ -16,11 +16,13 @@ public class SocketConnection implements Runnable {
     private Socket socket;
     private HttpServer httpServer;
     private ResponseDispatcher dispatcher;
+    private HttpRequestParser httpRequestParser;
 
-    public SocketConnection(Socket socket, HttpServer httpServer) {
+    public SocketConnection(Socket socket, HttpServer httpServer, HttpRequestParser httpRequestParser) {
         this.socket = socket;
         this.httpServer = httpServer;
         this.dispatcher = this.httpServer.getDispatcher();
+        this.httpRequestParser = httpRequestParser;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class SocketConnection implements Runnable {
         try (InputStream socketInputStream = socket.getInputStream();
              OutputStream socketOutputStream = socket.getOutputStream()) {
 
-            HttpRequest httpRequest = HttpRequestParser.parse(socketInputStream, httpServer.getFileDirectory());
+            HttpRequest httpRequest = httpRequestParser.parse(socketInputStream, httpServer.getFileDirectory());
 
             HttpResponse response = dispatcher.dispatch(httpRequest);
 
