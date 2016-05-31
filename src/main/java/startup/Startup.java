@@ -5,8 +5,8 @@ import server.HttpServerImpl;
 
 import java.util.logging.Logger;
 
-public class Mains {
-    private static final Logger LOGGER = Logger.getLogger(Mains.class.getName());
+public class Startup {
+    private static final Logger LOGGER = Logger.getLogger(Startup.class.getName());
 
     public static void main(String[] args) {
         HttpServer httpServer;

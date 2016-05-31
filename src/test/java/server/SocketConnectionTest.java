@@ -12,7 +12,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import server.common.HttpMethod;
 import server.request.HttpRequest;
-import server.request.HttpRequests;
+import server.request.HttpRequestParser;
 
 import java.io.InputStream;
 import java.net.Socket;
@@ -24,7 +24,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({HttpRequests.class})
+@PrepareForTest({HttpRequestParser.class})
 public class SocketConnectionTest {
 
     @Mock
@@ -41,8 +41,8 @@ public class SocketConnectionTest {
     @Before
     public void setUp() throws Exception {
         requestString = FileUtils.readFileToString(Paths.get("./src/test/resources/getRequest.txt").toFile());
-        mockStatic(HttpRequests.class);
-        when(HttpRequests.parse(any(InputStream.class), any(Path.class))).thenReturn(httpRequest);
+        mockStatic(HttpRequestParser.class);
+        when(HttpRequestParser.parse(any(InputStream.class), any(Path.class))).thenReturn(httpRequest);
         when(httpRequest.getUrl()).thenReturn("/index.html");
         when(httpRequest.getMethod()).thenReturn(HttpMethod.GET);
         when(httpRequest.getHeader()).thenReturn(Maps.newHashMap());

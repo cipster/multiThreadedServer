@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-public class HttpRequests {
+public class HttpRequestParser {
 
     public static HttpRequest parse(InputStream requestStream, Path filesDirectory) {
         try {

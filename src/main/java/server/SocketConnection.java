@@ -1,7 +1,7 @@
 package server;
 
 import server.request.HttpRequest;
-import server.request.HttpRequests;
+import server.request.HttpRequestParser;
 import server.response.HttpResponse;
 
 import java.io.BufferedOutputStream;
@@ -28,7 +28,7 @@ public class SocketConnection implements Runnable {
         try (InputStream socketInputStream = socket.getInputStream();
              OutputStream socketOutputStream = socket.getOutputStream()) {
 
-            HttpRequest httpRequest = HttpRequests.parse(socketInputStream, httpServer.getFileDirectory());
+            HttpRequest httpRequest = HttpRequestParser.parse(socketInputStream, httpServer.getFileDirectory());
 
             HttpResponse response = dispatcher.dispatch(httpRequest);
 

@@ -14,8 +14,8 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({HttpRequests.class})
-public class HttpRequestsTest {
+@PrepareForTest({HttpRequestParser.class})
+public class HttpRequestParserTest {
 
     @Before
     public void setUp() throws Exception {
@@ -24,9 +24,9 @@ public class HttpRequestsTest {
 
     @Test
     public void mockAStaticMethod() {
-        mockStatic(HttpRequests.class);
+        mockStatic(HttpRequestParser.class);
         HttpRequest expected = null;
-        when(HttpRequests.parse(any(InputStream.class), any(Path.class))).thenReturn(expected);
+        when(HttpRequestParser.parse(any(InputStream.class), any(Path.class))).thenReturn(expected);
 
     }
 }
