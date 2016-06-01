@@ -15,13 +15,11 @@ public class SocketConnection implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(SocketConnection.class.getName());
     private Socket socket;
     private HttpServer httpServer;
-    private ResponseDispatcher dispatcher;
     private HttpRequestParser httpRequestParser;
 
     public SocketConnection(Socket socket, HttpServer httpServer, HttpRequestParser httpRequestParser) {
         this.socket = socket;
         this.httpServer = httpServer;
-        this.dispatcher = this.httpServer.getDispatcher();
         this.httpRequestParser = httpRequestParser;
     }
 
@@ -32,7 +30,7 @@ public class SocketConnection implements Runnable {
 
             HttpRequest httpRequest = httpRequestParser.parse(socketInputStream, httpServer.getFileDirectory());
 
-            HttpResponse response = dispatcher.dispatch(httpRequest);
+            HttpResponse response = httpServer.dispatch(httpRequest);
 
             respond(response, socketOutputStream);
         } catch (IOException e) {

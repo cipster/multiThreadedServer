@@ -65,7 +65,7 @@ public class HttpRequestParserImpl implements HttpRequestParser {
                 requestChars.add(requestReader.readLine());
             }
             requestChars.remove(requestChars.size() - 1);
-            String fileLine = Joiner.on("\n").join(requestChars);
+            String fileLine = Joiner.on(System.getProperty("line.separator")).join(requestChars);
             Path newFile = filesDirectory.resolve(filename);
             saveNewFile(fileLine.getBytes(), newFile);
         }

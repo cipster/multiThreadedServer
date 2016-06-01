@@ -1,7 +1,9 @@
 package server;
 
+import server.request.HttpRequest;
 import server.request.HttpRequestParser;
 import server.request.HttpRequestParserImpl;
+import server.response.HttpResponse;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -131,7 +133,7 @@ public class HttpServerImpl implements HttpServer {
     }
 
     @Override
-    public ResponseDispatcher getDispatcher() {
-        return dispatcher;
+    public HttpResponse dispatch(HttpRequest httpRequest) throws IOException {
+        return dispatcher.dispatch(httpRequest);
     }
 }
