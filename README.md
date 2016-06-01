@@ -2,7 +2,7 @@
 
 This server lives on the web and spends it's time serving HTML and on specific requests it also grants it's users file upload and download.
 
-You can start it by running <code>java -jar <pathTo.jar> <port> <fileDirectory></code>, 
+You can start it by running <code>java -jar <mark>pathTo.jar</mark> <mark>port</mark> <mark>fileDirectory</mark></code>, 
 I like to use <code>java -jar /home/ciprian/work/projects/multiThreadedServer/target/multithreadedserver-1.0-SNAPSHOT.jar 8080 /home/ciprian/serverFiles</code>, but I suggest 
 checking out the code and running a <code>mvn clean install</code> before even trying.
 
